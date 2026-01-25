@@ -8,6 +8,8 @@ export interface Show {
     venue: string;
     location: string;
     status: 'available' | 'sold-out';
+    image?: string;
+    link?: string;
 }
 
 export interface SocialLink {

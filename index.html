@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paper Straw - Indie Rock</title>
+    <title>Paper Straw</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link
@@ -17,51 +18,15 @@
     />
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#e8ba30",
-              "primary-dark": "#d1a520",
-              "background-light": "#f8f7f6",
-              "background-dark": "#211d11",
-              "text-main": "#1b180e",
-              "surface-light": "#f3f0e7",
-              "surface-dark": "#2d281a",
-              "text-muted": "#97854e",
-            },
-            fontFamily: {
-              display: ["Plus Jakarta Sans", "sans-serif"],
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              "2xl": "1rem",
-              full: "9999px",
-            },
-            animation: {
-                'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-            },
-            keyframes: {
-                fadeInUp: {
-                    '0%': { opacity: '0', transform: 'translateY(20px)' },
-                    '100%': { opacity: '1', transform: 'translateY(0)' },
-                }
-            }
-          },
-        },
-      };
-    </script>
     <style>
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
       body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Libre Baskerville', serif;
+      }
+      h1, h2, h3, h4, h5, h6, .font-display {
+        font-family: 'Young Serif', serif;
       }
     </style>
   <script type="importmap">
@@ -76,7 +41,7 @@
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased overflow-x-hidden">
+  <body class="bg-background-light dark:bg-background-dark text-text-main font-body antialiased overflow-x-hidden">
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

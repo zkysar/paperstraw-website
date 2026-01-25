@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-primary: #e8ba30;
+    --color-primary-dark: #d1a520;
+    --color-background-light: #f8f7f6;
+    --color-background-dark: #211d11;
+    --color-text-main: #1b180e;
+    --color-surface-light: #f3f0e7;
+    --color-surface-dark: #2d281a;
+    --color-text-muted: #97854e;
+
+    --font-display: "Young Serif", serif;
+    --font-body: "Libre Baskerville", serif;
+
+    --radius: 0.25rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-full: 9999px;
+
+    --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
+    --animate-fade-in: fadeIn 1s ease-in-out forwards;
+
+    @keyframes fadeInUp {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+}
+
+@layer utilities {
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
