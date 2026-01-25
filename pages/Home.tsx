@@ -342,18 +342,13 @@ const Home: React.FC = () => {
                         </h3>
 
                         <div className="flex flex-col gap-3">
-                            {previousShows.map((show) => {
+                            {previousShows.map((show, index) => {
+                                const displayImage = show.image || bandPhotos[index % bandPhotos.length];
                                 const Content = () => (
                                     <>
-                                        {show.image ? (
-                                            <div className="w-full sm:w-24 h-32 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 relative">
-                                                <img src={show.image} alt={show.venue} className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all" />
-                                            </div>
-                                        ) : (
-                                            <div className="w-full sm:w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-                                                <span className="material-symbols-outlined text-gray-400">event</span>
-                                            </div>
-                                        )}
+                                        <div className="w-full sm:w-24 h-32 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 relative">
+                                            <img src={displayImage} alt={show.venue} className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all" />
+                                        </div>
 
                                         <div className="flex-1 text-center sm:text-left min-w-0 w-full">
                                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">

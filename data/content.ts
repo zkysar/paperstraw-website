@@ -123,8 +123,8 @@ export const previousShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'DEC', day: '19', year: '2025' },
         status: 'available',
-        image: '/assets/press/band-photo-6.jpg',
-        link: 'https://www.instagram.com/p/DRNlkifEiyE/'
+        image: '/assets/past-gigs/oreillys-dec-2025.jpg',
+        link: 'https://partiful.com/e/XspLTvwr6cF9EKxjGCeU'
     },
     {
         id: 'nov-02-2025',
@@ -132,7 +132,6 @@ export const previousShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'NOV', day: '02', year: '2025' },
         status: 'available',
-        image: '/assets/press/band-photo-5.jpg',
         link: 'https://sfbike.org/winterfest/'
     },
     {
@@ -141,7 +140,6 @@ export const previousShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'MAY', day: '23', year: '2025' },
         status: 'available',
-        image: '/assets/press/band-photo-2.jpg',
         link: 'https://www.instagram.com/p/DLOzO6Autt4/'
     },
     {
@@ -150,8 +148,8 @@ export const previousShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'JAN', day: '31', year: '2025' },
         status: 'available',
-        image: '/assets/press/band-photo-9.jpg',
-        link: 'https://www.instagram.com/p/DG9XILxSEYg/'
+        image: '/assets/past-gigs/oreillys-jan-2025.jpg',
+        link: 'https://partiful.com/e/anaeSjBn07zW5Kvf0Klr'
     },
     {
         id: 'dec-16-2024',
@@ -159,8 +157,8 @@ export const previousShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'DEC', day: '16', year: '2024' },
         status: 'available',
-        image: '/assets/press/band-photo-7.jpg',
-        link: 'https://www.instagram.com/p/DD5_SAhpgRy/'
+        image: '/assets/past-gigs/kilowatt-dec-2024.jpg',
+        link: 'https://partiful.com/e/pYdnOoNFUCUGuCDzkgJi'
     },
     {
         id: 'jun-30-2024',
@@ -168,7 +166,6 @@ export const previousShows: Show[] = [
         location: 'San Jose, CA',
         date: { month: 'JUN', day: '30', year: '2024' },
         status: 'available',
-        image: '/assets/press/band-photo-4.jpg',
         link: 'https://www.instagram.com/p/C7rWhlgRmF6/'
     },
     {
@@ -177,7 +174,6 @@ export const previousShows: Show[] = [
         location: 'San Jose, CA',
         date: { month: 'MAR', day: '30', year: '2024' },
         status: 'available',
-        image: '/assets/press/band-photo-8.jpg',
         link: 'https://www.instagram.com/p/C47NvqzOvyk/'
     }
 ];

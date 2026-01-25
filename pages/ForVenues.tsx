@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
+import { previousShows } from '../data/content';
 
 const highResPhotos = [
     {
@@ -139,6 +140,34 @@ const ForVenues: React.FC = () => {
                                     Paper Straw is a San Francisco band that formed in 2023, writing songs that feel like therapy disguised as a bike ride. The sound lives somewhere between folk and rock, more interested in contentment than conflict. The lyrics explore friendship, growing up, and the quiet permission to not have it all figured out. It’s music for golden hour and lazy afternoons.
                                 </p>
                             </div>
+                        </div>
+                    </section>
+
+                    <div className="w-full h-px bg-black/5 dark:bg-white/5"></div>
+
+                    {/* Venues Section */}
+                    <section id="venues" className="scroll-mt-24">
+                        <div className="flex items-baseline justify-between gap-4 mb-8">
+                            <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-text-main dark:text-white uppercase leading-none">Venues Played</h2>
+                            <div className="h-px flex-1 bg-black/5 dark:bg-white/5 hidden sm:block mx-4"></div>
+                            <p className="text-[10px] md:text-xs font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">San Francisco & Bay Area</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {Array.from(new Set(previousShows.map(show => show.venue))).map(venueName => {
+                                const venueShow = previousShows.find(s => s.venue === venueName);
+                                return (
+                                    <div key={venueName} className="flex items-center gap-4 p-4 bg-surface-light dark:bg-surface-dark rounded-xl border border-black/5 dark:border-white/5 shadow-sm group hover:border-primary/30 transition-all">
+                                        <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-background-light dark:bg-background-dark rounded-full border border-black/5 dark:border-white/5 group-hover:bg-primary/10 transition-colors">
+                                            <span className="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">location_on</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <h3 className="font-bold text-text-main dark:text-white leading-tight">{venueName}</h3>
+                                            <p className="text-xs text-text-muted font-medium">{venueShow?.location}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </section>
 
