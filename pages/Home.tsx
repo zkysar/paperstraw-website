@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import { Show } from '../types';
 import { useAudio } from '../context/AudioContext';
 
-import { releases, bandPhotos, upcomingShows, previousShows, Release } from '../data/content';
+import { releases, bandPhotos, faceCoordinates, upcomingShows, previousShows, Release } from '../data/content';
 
 // Helper for scheduling text
 const getSchedulingText = () => {
@@ -16,18 +16,26 @@ const getSchedulingText = () => {
 };
 
 const Home: React.FC = () => {
+    // Desktop State
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [previousImageIndex, setPreviousImageIndex] = useState(0);
+
+    // Mobile State
+    const [mobileImage, setMobileImage] = useState<string | null>(null);
+    const [mobileFaceIndex, setMobileFaceIndex] = useState(0);
+    const [previousMobileFaceIndex, setPreviousMobileFaceIndex] = useState(0);
+
     const [selectedRelease, setSelectedRelease] = useState<string | null>(null);
     const { playTrack, currentTrack, isPlaying, togglePlay } = useAudio();
 
+    // Initialize Mobile Image (One time on mount)
     useEffect(() => {
-        const interval = setInterval(() => {
-            setPreviousImageIndex(currentImageIndex);
-            setCurrentImageIndex((prev) => (prev + 1) % bandPhotos.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [currentImageIndex]);
+        if (bandPhotos.length > 0) {
+            // Pick a random image from the full collection
+            const randomImage = bandPhotos[Math.floor(Math.random() * bandPhotos.length)];
+            setMobileImage(randomImage);
+        }
+    }, []);
 
     const handleReleaseClick = (releaseId: string) => {
         setSelectedRelease(selectedRelease === releaseId ? null : releaseId);
@@ -46,6 +54,7 @@ const Home: React.FC = () => {
 
     const selectedReleaseData = releases.find(r => r.id === selectedRelease);
 
+    // Desktop Slideshow Effect
     useEffect(() => {
         const interval = setInterval(() => {
             setPreviousImageIndex(currentImageIndex);
@@ -54,6 +63,59 @@ const Home: React.FC = () => {
         return () => clearInterval(interval);
     }, [currentImageIndex]);
 
+    // Mobile Face Cycling Effect (Cross-Fade style)
+    useEffect(() => {
+        if (!mobileImage) return;
+
+        // Use the full bandPhotos collection
+        const faces = faceCoordinates[mobileImage] || [{ x: 50, y: 50 }]; // Fallback to center
+
+        const interval = setInterval(() => {
+            if (mobileFaceIndex < faces.length - 1) {
+                // Just move to next face in current image
+                setPreviousMobileFaceIndex(mobileFaceIndex);
+                setMobileFaceIndex(prev => prev + 1);
+            } else {
+                // Move to next image in the full bandPhotos collection
+                const currentImgIndex = bandPhotos.indexOf(mobileImage);
+                const nextImgIndex = (currentImgIndex + 1) % bandPhotos.length;
+                const nextImage = bandPhotos[nextImgIndex];
+
+                setPreviousMobileFaceIndex(mobileFaceIndex);
+                setMobileImage(nextImage);
+                setMobileFaceIndex(0);
+            }
+        }, 4000); // 4 seconds per face
+
+        return () => clearInterval(interval);
+    }, [mobileImage, mobileFaceIndex]);
+
+
+
+    // Helper to get mobile background styles
+    const getMobileFaceStyle = (faceIndex: number) => {
+        if (!mobileImage) return {};
+        const faces = faceCoordinates[mobileImage] || [{ x: 50, y: 50 }];
+        const face = faces[faceIndex] || faces[0];
+
+        const zoom = 3; // Corresponds to backgroundSize: '300%'
+
+        // CSS percentage background-position math to CENTER a coordinate:
+        // p = (target_coordinate_percent * zoom - 50) / (zoom - 1)
+        let posX = (face.x * zoom - 50) / (zoom - 1);
+        let posY = (face.y * zoom - 50) / (zoom - 1);
+
+        // CLAMP to 0-100 to prevent edge gaps
+        posX = Math.max(0, Math.min(100, posX));
+        posY = Math.max(0, Math.min(100, posY));
+
+        return {
+            backgroundImage: `url('${mobileImage}')`,
+            backgroundPosition: `${posX}% ${posY}%`,
+            backgroundSize: `${zoom * 100}%`,
+        };
+    };
+
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark">
             {/* Navbar is now in Layout */}
@@ -61,18 +123,38 @@ const Home: React.FC = () => {
             {/* Hero Section */}
             <section className="relative h-screen w-full flex items-start justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-black/20 z-10"></div>
-                    {/* Previous image - stays visible underneath */}
-                    <div
-                        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu will-change-transform"
-                        style={{ backgroundImage: `url('${bandPhotos[previousImageIndex]}')` }}
-                    ></div>
-                    {/* Current image - fades in on top */}
-                    <div
-                        key={currentImageIndex}
-                        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat animate-fade-in transform-gpu will-change-transform"
-                        style={{ backgroundImage: `url('${bandPhotos[currentImageIndex]}')` }}
-                    ></div>
+                    <div className="absolute inset-0 bg-black/30 z-10"></div>
+
+                    {/* DESKTOP View (> md) */}
+                    <div className="hidden md:block w-full h-full relative">
+                        {/* Previous image */}
+                        <div
+                            className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transform-gpu will-change-transform"
+                            style={{ backgroundImage: `url('${bandPhotos[previousImageIndex]}')` }}
+                        ></div>
+                        {/* Current image */}
+                        <div
+                            key={currentImageIndex}
+                            className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat animate-fade-in transform-gpu will-change-transform"
+                            style={{ backgroundImage: `url('${bandPhotos[currentImageIndex]}')` }}
+                        ></div>
+                    </div>
+
+                    {/* MOBILE View (< md) */}
+                    <div className="block md:hidden w-full h-full relative overflow-hidden">
+                        {/* Previous Face */}
+                        <div
+                            className="absolute inset-0 w-full h-full bg-no-repeat transition-none will-change-transform"
+                            style={getMobileFaceStyle(previousMobileFaceIndex)}
+                        ></div>
+                        {/* Current Face (Fades In) */}
+                        <div
+                            key={mobileFaceIndex}
+                            className="absolute inset-0 w-full h-full bg-no-repeat animate-fade-in will-change-transform"
+                            style={getMobileFaceStyle(mobileFaceIndex)}
+                        ></div>
+                    </div>
+
                 </div>
 
                 <div className="relative z-20 flex flex-col items-center text-center px-4 max-w-4xl mx-auto pt-28 md:pt-32 animate-fade-in-up">
