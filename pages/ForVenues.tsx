@@ -11,12 +11,6 @@ const highResPhotos = [
         alt: 'Paper Straw Press Photo'
     },
     {
-        id: 'logo-full',
-        url: '/assets/press/logo.png',
-        previewUrl: '/assets/press/logo.png',
-        alt: 'Paper Straw Logo'
-    },
-    {
         id: 'hr2',
         url: '/assets/press/press-photo-hr-2.jpg',
         previewUrl: '/assets/press/press-photo-lr-2.jpg',
@@ -37,35 +31,34 @@ const highResPhotos = [
     {
         id: 'show1',
         url: '/assets/press/press-photo-show-1.jpg',
-        previewUrl: '/assets/press/press-photo-show-1.jpg',
+        previewUrl: '/assets/press/press-photo-show-1-web.jpg',
         alt: 'Paper Straw Live 4'
     },
     {
         id: 'show2',
         url: '/assets/press/press-photo-show-2.jpg',
-        previewUrl: '/assets/press/press-photo-show-2.jpg',
+        previewUrl: '/assets/press/press-photo-show-2-web.jpg',
         alt: 'Paper Straw Live 5'
     },
     {
         id: 'show3',
         url: '/assets/press/press-photo-show-3.jpg',
-        previewUrl: '/assets/press/press-photo-show-3.jpg',
+        previewUrl: '/assets/press/press-photo-show-3-web.jpg',
         alt: 'Paper Straw Live 6'
     },
     {
         id: 'show4',
         url: '/assets/press/press-photo-show-4.jpg',
-        previewUrl: '/assets/press/press-photo-show-4.jpg',
+        previewUrl: '/assets/press/press-photo-show-4-web.jpg',
         alt: 'Paper Straw Live 7'
     },
     {
         id: 'show5',
         url: '/assets/press/press-photo-show-5.jpg',
-        previewUrl: '/assets/press/press-photo-show-5.jpg',
+        previewUrl: '/assets/press/press-photo-show-5-web.jpg',
         alt: 'Paper Straw Live 8'
     },
 ];
-
 
 const brandingAssets = [
     { id: 'logo1', url: '/assets/press/logo-primary.png', name: 'Primary Logo (PNG)', type: 'Transparent' },
@@ -73,8 +66,9 @@ const brandingAssets = [
     { id: 'logo3', url: '/assets/press/logo-tertiary.png', name: 'Tertiary Logo (PNG)', type: 'Transparent' },
     { id: 'logo-new', url: '/assets/press/logo.png', name: 'Main Logo (PNG)', type: 'Full' },
     { id: 'icon', url: '/assets/press/icon-primary.png', name: 'Icon (PNG)', type: 'Transparent' },
-    { id: 'poster', url: '/assets/press/poster-web.png', name: 'Promo Poster (Web)', type: 'PNG' },
+    { id: 'poster', url: '/assets/press/poster-web-optimized.jpg', name: 'Promo Poster (Web)', type: 'JPEG' },
 ];
+
 
 const ForVenues: React.FC = () => {
     const handleScrollToSection = (id: string) => {
@@ -179,7 +173,12 @@ const ForVenues: React.FC = () => {
                         <div>
                             <div className="flex items-end justify-between gap-4 mb-6">
                                 <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-text-main dark:text-white uppercase leading-none">Press Photos</h2>
-                                <p className="text-[10px] md:text-xs font-bold text-text-muted uppercase tracking-widest hidden sm:block">Swipe to see more &bull; High Resolution Assets</p>
+                                <div className="flex flex-col items-end gap-1">
+                                    <a href="https://drive.google.com/drive/folders/1i7bFs0jJUSsKdt7ZdERj4KpCFy-xwuen?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-dark transition-colors">
+                                        Download Full Press Kit <span className="material-symbols-outlined text-sm">folder_zip</span>
+                                    </a>
+                                    <p className="text-[10px] md:text-xs font-bold text-text-muted uppercase tracking-widest hidden sm:block">Swipe to see more &bull; High Resolution Assets</p>
+                                </div>
                             </div>
                             <div className="flex gap-4 overflow-x-auto pb-6 pt-2 snap-x scrollbar-hide">
                                 {highResPhotos.map((photo) => (
@@ -201,29 +200,6 @@ const ForVenues: React.FC = () => {
                                                 Download High-Res <span className="material-symbols-outlined text-base">download</span>
                                             </a>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Branding Assets */}
-                        <div>
-                            <div className="flex items-end justify-between gap-4 mb-6">
-                                <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-text-main dark:text-white uppercase leading-none">Logos & Assets</h2>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {brandingAssets.map((asset) => (
-                                    <div key={asset.id} className="p-5 bg-surface-light dark:bg-surface-dark rounded-xl border border-black/5 dark:border-white/5 flex flex-col gap-4">
-                                        <div className="h-32 flex items-center justify-center p-3 bg-background-light dark:bg-background-dark rounded-lg border border-dashed border-black/10 dark:border-white/10">
-                                            <img src={asset.url} alt={asset.name} className="max-h-full max-w-full object-contain" loading="lazy" />
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <h3 className="font-bold text-sm text-text-main dark:text-white">{asset.name}</h3>
-                                            <p className="text-[10px] text-text-muted uppercase tracking-wider">{asset.type}</p>
-                                        </div>
-                                        <a href={asset.url} download className="mt-auto flex items-center justify-center gap-2 py-2 px-4 bg-primary text-text-main text-xs font-bold rounded-lg hover:bg-primary-dark transition-all">
-                                            Download <span className="material-symbols-outlined text-base">download</span>
-                                        </a>
                                     </div>
                                 ))}
                             </div>

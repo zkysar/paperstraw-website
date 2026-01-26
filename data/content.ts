@@ -19,22 +19,6 @@ export interface Release {
 
 export const releases: Release[] = [
     {
-        id: 'untitled-ep',
-        title: 'Untitled EP',
-        date: 'Late 2026 (Anticipated)',
-        description: 'Our upcoming EP is currently in the works. Stay tuned for more details.',
-        gradientColors: 'from-pink-500/20 to-pink-500/5 dark:from-pink-500/30 dark:to-pink-500/10',
-        streamingLinks: {},
-    },
-    {
-        id: 'summer',
-        title: 'Summer',
-        date: 'March 2026 (Anticipated)',
-        description: 'An upcoming single capturing the warmth and energy of California summers.',
-        gradientColors: 'from-yellow-500/20 to-yellow-500/5 dark:from-yellow-500/30 dark:to-yellow-500/10',
-        streamingLinks: {},
-    },
-    {
         id: 'lets-ride-bikes',
         title: "Let's Ride Bikes!",
         date: 'December 2025',
@@ -43,8 +27,6 @@ export const releases: Release[] = [
         streamingLinks: {
             spotify: 'https://open.spotify.com/track/6uMAIVI0Ioz6qxeJlfO1hG?si=455a2a0e20834cca',
             appleMusic: 'https://music.apple.com/us/album/lets-ride-bikes-single/1863180341',
-            bandcamp: '#',
-            youtube: '#',
             deezer: 'https://www.deezer.com/album/881922682',
         },
         audioUrl: '/audio/bikes.mp3',
@@ -140,7 +122,8 @@ export const previousShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'MAY', day: '23', year: '2025' },
         status: 'available',
-        link: 'https://www.instagram.com/p/DLOzO6Autt4/'
+        image: '/assets/past-gigs/oreillys-may-2025.jpg',
+        link: 'https://partiful.com/e/aWPUcnwTFtTnWwU5eb1X'
     },
     {
         id: 'jan-31-2025',

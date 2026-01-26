@@ -114,6 +114,7 @@ const AudioPlayer: React.FC = () => {
                 autoPlay={isPlaying}
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={handleEnded}
+                muted={isMuted}
                 loop={false}
             />
         </div>
