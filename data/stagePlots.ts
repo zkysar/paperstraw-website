@@ -20,10 +20,10 @@ export interface StagePlot {
 
 export const stagePlots: StagePlot[] = [
     {
-        slug: 'bottom-of-the-hill-2026-04-01',
+        slug: 'bottom-of-the-hill-2026-04-08',
         venue: 'Bottom of the Hill',
         location: 'San Francisco, CA',
-        date: '2026-04-01',
+        date: '2026-04-08',
         members: [
             {
                 name: 'Zach',
