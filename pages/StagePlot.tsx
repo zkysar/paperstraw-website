@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { stagePlots } from '../data/stagePlots';
 
@@ -21,6 +21,12 @@ const StagePlotPage: React.FC = () => {
             </div>
         );
     }
+
+    useEffect(() => {
+        const prev = document.title;
+        document.title = `Paper Straw – Stage Plot – ${plot.venue} – ${plot.date}`;
+        return () => { document.title = prev; };
+    }, [plot.venue, plot.date]);
 
     const sorted = [...plot.members].sort((a, b) => a.y - b.y);
 
