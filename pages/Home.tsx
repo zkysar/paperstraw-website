@@ -366,37 +366,46 @@ const Home: React.FC = () => {
 
                         <div className="flex flex-col gap-4">
                             {upcomingShows.length > 0 ? (
-                                upcomingShows.map((show) => (
-                                    <div key={show.id} className="group bg-background-light dark:bg-background-dark p-6 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-lg transition-shadow border border-transparent hover:border-primary/20">
-                                        <div className="flex items-center gap-6 w-full sm:w-auto">
-                                            {show.image && (
-                                                <div className="hidden sm:block w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                                                    <img src={show.image} alt={show.venue} className="w-full h-full object-cover" />
-                                                </div>
-                                            )}
-                                            <div className="text-center sm:text-left min-w-[80px]">
-                                                <div className={`text-sm font-bold uppercase tracking-wider ${show.status === 'sold-out' ? 'text-gray-400' : 'text-primary'}`}>{show.date.month} {show.date.day}</div>
-                                                <div className={`text-2xl font-black ${show.status === 'sold-out' ? 'text-gray-400 line-through decoration-primary' : 'text-text-main dark:text-white'}`}>{show.date.year}</div>
+                                upcomingShows.map((show, index) => {
+                                    const displayImage = show.image || bandPhotos[index % bandPhotos.length];
+                                    return (
+                                    <div key={show.id} className="group bg-background-light dark:bg-background-dark p-4 rounded-xl flex flex-col sm:flex-row items-center gap-4 hover:shadow-lg transition-shadow border border-transparent hover:border-primary/20">
+                                        <div className="w-full sm:w-24 h-32 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 relative">
+                                            <img src={displayImage} alt={show.venue} className="w-full h-full object-cover" />
+                                        </div>
+
+                                        <div className="flex-1 text-center sm:text-left min-w-0 w-full">
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                                                <h4 className="font-bold text-text-main dark:text-white truncate group-hover:text-primary transition-colors">{show.venue}</h4>
+                                                <span className="hidden sm:inline text-gray-300">•</span>
+                                                <span className="text-sm text-gray-500">{show.location}</span>
                                             </div>
-                                            <div className="text-center sm:text-left">
-                                                <h3 className="text-xl font-bold text-text-main dark:text-white group-hover:text-primary transition-colors">{show.venue}</h3>
-                                                <div className="flex items-center justify-center sm:justify-start gap-1 text-gray-500 dark:text-gray-400 mt-1">
-                                                    <span className="material-symbols-outlined text-sm">location_on</span>
-                                                    <span className="text-sm font-medium">{show.location}</span>
-                                                </div>
+                                            <div className="text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded w-fit mx-auto sm:mx-0">
+                                                {show.date.month} {show.date.day}, {show.date.year}
                                             </div>
                                         </div>
-                                        <button
-                                            className={`w-full sm:w-auto px-6 py-2.5 font-bold rounded-lg transition-colors ${show.status === 'sold-out'
-                                                ? 'bg-gray-200 dark:bg-gray-800 text-gray-500 cursor-not-allowed'
-                                                : 'bg-text-main dark:bg-white text-white dark:text-text-main hover:bg-primary dark:hover:bg-primary hover:text-text-main'
-                                                }`}
-                                            disabled={show.status === 'sold-out'}
-                                        >
-                                            {show.status === 'sold-out' ? 'Sold Out' : 'Tickets'}
-                                        </button>
+
+                                        {show.status === 'sold-out' ? (
+                                            <span className="w-full sm:w-auto flex-shrink-0 px-6 py-2.5 font-bold rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-500 cursor-not-allowed text-center">
+                                                Sold Out
+                                            </span>
+                                        ) : show.link ? (
+                                            <a
+                                                href={show.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full sm:w-auto flex-shrink-0 px-6 py-2.5 font-bold rounded-lg bg-text-main dark:bg-white text-white dark:text-text-main hover:bg-primary dark:hover:bg-primary hover:text-text-main transition-colors text-center"
+                                            >
+                                                RSVP
+                                            </a>
+                                        ) : (
+                                            <span className="w-full sm:w-auto flex-shrink-0 px-6 py-2.5 font-bold rounded-lg bg-text-main dark:bg-white text-white dark:text-text-main text-center">
+                                                TBA
+                                            </span>
+                                        )}
                                     </div>
-                                ))
+                                    );
+                                })
                             ) : (
                                 <div className="bg-background-light dark:bg-background-dark rounded-xl p-12 text-center border-2 border-dashed border-gray-200 dark:border-gray-800">
                                     <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">

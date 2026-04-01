@@ -142,9 +142,29 @@ export const faceCoordinates: Record<string, { x: number, y: number }[]> = {
     ]
 };
 
-export const upcomingShows: Show[] = [];
+const MONTH_MAP: Record<string, number> = {
+    JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
+    JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
+};
 
-export const previousShows: Show[] = [
+function showDate(show: Show): Date {
+    return new Date(
+        parseInt(show.date.year),
+        MONTH_MAP[show.date.month] ?? 0,
+        parseInt(show.date.day) + 1, // count the show as "upcoming" through the end of its day
+    );
+}
+
+const allShows: Show[] = [
+    {
+        id: 'apr-08-2026',
+        venue: 'Bottom of the Hill',
+        location: 'San Francisco, CA',
+        date: { month: 'APR', day: '08', year: '2026' },
+        status: 'available',
+        image: '/assets/past-gigs/bottom-of-the-hill-apr-2026.png',
+        link: 'https://partiful.com/e/PCh2CgogZPqsdgEKmgDv'
+    },
     {
         id: 'dec-19-2025',
         venue: "O'Reilly's Pub",
@@ -206,3 +226,11 @@ export const previousShows: Show[] = [
         link: 'https://www.instagram.com/p/C47NvqzOvyk/'
     }
 ];
+
+const now = new Date();
+export const upcomingShows: Show[] = allShows
+    .filter(s => showDate(s) > now)
+    .sort((a, b) => showDate(a).getTime() - showDate(b).getTime());
+export const previousShows: Show[] = allShows
+    .filter(s => showDate(s) <= now)
+    .sort((a, b) => showDate(b).getTime() - showDate(a).getTime());
