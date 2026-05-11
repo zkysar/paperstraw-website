@@ -157,6 +157,13 @@ function showDate(show: Show): Date {
 
 const allShows: Show[] = [
     {
+        id: 'jul-02-2026',
+        venue: 'Rickshaw Stop',
+        location: 'San Francisco, CA',
+        date: { month: 'JUL', day: '02', year: '2026' },
+        status: 'available',
+    },
+    {
         id: 'apr-08-2026',
         venue: 'Bottom of the Hill',
         location: 'San Francisco, CA',
@@ -164,6 +171,14 @@ const allShows: Show[] = [
         status: 'available',
         image: '/assets/past-gigs/bottom-of-the-hill-apr-2026.png',
         link: 'https://partiful.com/e/PCh2CgogZPqsdgEKmgDv'
+    },
+    {
+        id: 'may-09-2026',
+        venue: 'Backyard Show',
+        location: 'San Francisco, CA',
+        date: { month: 'MAY', day: '09', year: '2026' },
+        status: 'available',
+        link: 'https://partiful.com/e/fdvMHJustUUUjDyevq48'
     },
     {
         id: 'dec-19-2025',
