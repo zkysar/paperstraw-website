@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import ForVenues from './pages/ForVenues';
 import StagePlotsPage from './pages/StagePlots';
 import StagePlotPage from './pages/StagePlot';
+import Card from './pages/Card';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from './components/Layout';
 import { AudioProvider } from './context/AudioContext';
@@ -35,6 +36,7 @@ const App: React.FC = () => {
                             <StagePlotPage />
                         </>
                     } />
+                    <Route path="/card" element={<Card />} />
                 </Routes>
             </HashRouter>
         </AudioProvider>
