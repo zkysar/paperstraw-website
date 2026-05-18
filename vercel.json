@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/card",
+      "destination": "https://www.instagram.com/paperstrawtheband/",
+      "permanent": false
+    }
+  ]
+}
