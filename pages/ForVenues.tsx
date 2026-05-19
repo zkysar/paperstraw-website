@@ -5,58 +5,28 @@ import { previousShows } from '../data/content';
 
 const highResPhotos = [
     {
-        id: 'hr4',
-        url: '/assets/press/press-photo-hr-4.jpg',
+        id: 'band1',
+        url: '/assets/press/band-photo-1.jpg',
         previewUrl: '/assets/press/band-photo-1.jpg',
-        alt: 'Paper Straw Press Photo'
+        alt: 'Paper Straw Band Photo 1'
     },
     {
-        id: 'hr2',
-        url: '/assets/press/press-photo-hr-2.jpg',
-        previewUrl: '/assets/press/press-photo-lr-2.jpg',
-        alt: 'Paper Straw Live 1'
-    },
-    {
-        id: 'hr3',
-        url: '/assets/press/press-photo-hr-3.jpg',
-        previewUrl: '/assets/press/press-photo-lr-3.jpg',
-        alt: 'Paper Straw Live 2'
-    },
-    {
-        id: 'hr1',
-        url: '/assets/press/press-photo-hr-1.jpg',
-        previewUrl: '/assets/press/press-photo-lr-1.jpg',
-        alt: 'Paper Straw Live 3'
-    },
-    {
-        id: 'show1',
-        url: '/assets/press/press-photo-show-1.jpg',
-        previewUrl: '/assets/press/press-photo-show-1-web.jpg',
-        alt: 'Paper Straw Live 4'
+        id: 'band2',
+        url: '/assets/press/band-photo-2.jpg',
+        previewUrl: '/assets/press/band-photo-2.jpg',
+        alt: 'Paper Straw Band Photo 2'
     },
     {
         id: 'show2',
-        url: '/assets/press/press-photo-show-2.jpg',
+        url: '/assets/press/press-photo-show-2-web.jpg',
         previewUrl: '/assets/press/press-photo-show-2-web.jpg',
-        alt: 'Paper Straw Live 5'
+        alt: 'Paper Straw Live 1'
     },
     {
-        id: 'show3',
-        url: '/assets/press/press-photo-show-3.jpg',
-        previewUrl: '/assets/press/press-photo-show-3-web.jpg',
-        alt: 'Paper Straw Live 6'
-    },
-    {
-        id: 'show4',
-        url: '/assets/press/press-photo-show-4.jpg',
-        previewUrl: '/assets/press/press-photo-show-4-web.jpg',
-        alt: 'Paper Straw Live 7'
-    },
-    {
-        id: 'show5',
-        url: '/assets/press/press-photo-show-5.jpg',
-        previewUrl: '/assets/press/press-photo-show-5-web.jpg',
-        alt: 'Paper Straw Live 8'
+        id: 'hr2',
+        url: '/assets/press/press-photo-hr-2-web.jpg',
+        previewUrl: '/assets/press/press-photo-hr-2-web.jpg',
+        alt: 'Paper Straw Live 2'
     },
 ];
 
