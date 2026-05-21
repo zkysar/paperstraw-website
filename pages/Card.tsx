@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 // Destination for the business-card QR code. Swap this to change where /card sends people.
-const CARD_DESTINATION = 'https://www.instagram.com/paperstrawtheband/';
+const CARD_DESTINATION = 'https://partiful.com/e/TKcXWyCSOEqQVeTLp8D8';
 
 const Card: React.FC = () => {
     useEffect(() => {
