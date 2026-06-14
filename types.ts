@@ -10,6 +10,10 @@ export interface Show {
     status: 'available' | 'sold-out';
     image?: string;
     link?: string;
+    /** Label for the link button on upcoming-show cards. Defaults to 'RSVP'. */
+    linkLabel?: string;
+    /** When true, the show is kept as a record but never shown in public upcoming/previous lists. */
+    unlisted?: boolean;
 }
 
 export interface SocialLink {
