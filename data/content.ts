@@ -162,6 +162,17 @@ const allShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'JUL', day: '02', year: '2026' },
         status: 'available',
+        image: '/assets/past-gigs/rickshaw-stop-jul-2026.jpg',
+        link: 'https://partiful.com/e/TKcXWyCSOEqQVeTLp8D8'
+    },
+    {
+        id: 'jul-29-2026',
+        venue: 'KZSU Wednesday Night Live',
+        location: 'Stanford, CA',
+        date: { month: 'JUL', day: '29', year: '2026' },
+        status: 'available',
+        link: 'https://kzsu.stanford.edu/',
+        linkLabel: 'More Info'
     },
     {
         id: 'apr-08-2026',
@@ -178,7 +189,8 @@ const allShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'MAY', day: '09', year: '2026' },
         status: 'available',
-        link: 'https://partiful.com/e/fdvMHJustUUUjDyevq48'
+        link: 'https://partiful.com/e/fdvMHJustUUUjDyevq48',
+        unlisted: true
     },
     {
         id: 'dec-19-2025',
@@ -244,8 +256,8 @@ const allShows: Show[] = [
 
 const now = new Date();
 export const upcomingShows: Show[] = allShows
-    .filter(s => showDate(s) > now)
+    .filter(s => !s.unlisted && showDate(s) > now)
     .sort((a, b) => showDate(a).getTime() - showDate(b).getTime());
 export const previousShows: Show[] = allShows
-    .filter(s => showDate(s) <= now)
+    .filter(s => !s.unlisted && showDate(s) <= now)
     .sort((a, b) => showDate(b).getTime() - showDate(a).getTime());

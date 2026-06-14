@@ -396,7 +396,7 @@ const Home: React.FC = () => {
                                                 rel="noopener noreferrer"
                                                 className="w-full sm:w-auto flex-shrink-0 px-6 py-2.5 font-bold rounded-lg bg-text-main dark:bg-white text-white dark:text-text-main hover:bg-primary dark:hover:bg-primary hover:text-text-main transition-colors text-center"
                                             >
-                                                RSVP
+                                                {show.linkLabel ?? 'RSVP'}
                                             </a>
                                         ) : (
                                             <span className="w-full sm:w-auto flex-shrink-0 px-6 py-2.5 font-bold rounded-lg bg-text-main dark:bg-white text-white dark:text-text-main text-center">
