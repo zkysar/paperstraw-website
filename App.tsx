@@ -6,6 +6,7 @@ import StagePlotsPage from './pages/StagePlots';
 import StagePlotPage from './pages/StagePlot';
 import Card from './pages/Card';
 import Summer from './pages/Summer';
+import QrCodes from './pages/QrCodes';
 import ScrollToTop from './components/ScrollToTop';
 import PostHogPageviews from './components/PostHogPageviews';
 import Layout from './components/Layout';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
                     } />
                     <Route path="/card" element={<Card />} />
                     <Route path="/summer" element={<Summer />} />
+                    <Route path="/qr-codes" element={<QrCodes />} />
                 </Routes>
             </HashRouter>
         </AudioProvider>

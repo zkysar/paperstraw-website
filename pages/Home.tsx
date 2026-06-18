@@ -526,6 +526,7 @@ const Home: React.FC = () => {
                         <div className="flex gap-4">
                             <Link to="/for-venues" className="hover:text-white transition-colors">For Venues</Link>
                             <Link to="/stage-plots" className="hover:text-white transition-colors">Stage Plots</Link>
+                            <Link to="/qr-codes" className="hover:text-white transition-colors">QR Codes</Link>
                         </div>
                     </div>
                 </div>

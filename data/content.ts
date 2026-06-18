@@ -180,7 +180,7 @@ const allShows: Show[] = [
         location: 'San Francisco, CA',
         date: { month: 'APR', day: '08', year: '2026' },
         status: 'available',
-        image: '/assets/past-gigs/bottom-of-the-hill-apr-2026.png',
+        image: '/assets/past-gigs/bottom-of-the-hill-apr-2026.jpg',
         link: 'https://partiful.com/e/PCh2CgogZPqsdgEKmgDv'
     },
     {
