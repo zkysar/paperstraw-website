@@ -5,7 +5,9 @@ import ForVenues from './pages/ForVenues';
 import StagePlotsPage from './pages/StagePlots';
 import StagePlotPage from './pages/StagePlot';
 import Card from './pages/Card';
+import Summer from './pages/Summer';
 import ScrollToTop from './components/ScrollToTop';
+import PostHogPageviews from './components/PostHogPageviews';
 import Layout from './components/Layout';
 import { AudioProvider } from './context/AudioContext';
 
@@ -13,6 +15,7 @@ const App: React.FC = () => {
     return (
         <AudioProvider>
             <HashRouter>
+                <PostHogPageviews />
                 <Routes>
                     <Route path="/" element={
                         <Layout variant="home">
@@ -37,6 +40,7 @@ const App: React.FC = () => {
                         </>
                     } />
                     <Route path="/card" element={<Card />} />
+                    <Route path="/summer" element={<Summer />} />
                 </Routes>
             </HashRouter>
         </AudioProvider>
