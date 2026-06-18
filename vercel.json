@@ -4,6 +4,11 @@
       "source": "/card",
       "destination": "https://partiful.com/e/TKcXWyCSOEqQVeTLp8D8",
       "permanent": false
+    },
+    {
+      "source": "/summer",
+      "destination": "https://distrokid.com/hyperfollow/paperstraw/summer",
+      "permanent": false
     }
   ]
 }
