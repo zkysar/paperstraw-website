@@ -23,6 +23,11 @@
       "source": "/summer",
       "destination": "https://distrokid.com/hyperfollow/paperstraw/summer",
       "permanent": false
+    },
+    {
+      "source": "/wb",
+      "destination": "https://distrokid.com/hyperfollow/paperstraw/summer",
+      "permanent": false
     }
   ]
 }
