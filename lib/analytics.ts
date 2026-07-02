@@ -26,3 +26,8 @@ export function capturePageview(): void {
     if (!started) return;
     posthog.capture('$pageview');
 }
+
+export function captureEvent(event: string, properties?: Record<string, unknown>): void {
+    if (!started) return;
+    posthog.capture(event, properties);
+}
