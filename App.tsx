@@ -8,6 +8,7 @@ import Card from './pages/Card';
 import Summer from './pages/Summer';
 import Whiteboard from './pages/Whiteboard';
 import QrCodes from './pages/QrCodes';
+import News from './pages/News';
 import ScrollToTop from './components/ScrollToTop';
 import PostHogPageviews from './components/PostHogPageviews';
 import Layout from './components/Layout';
@@ -45,6 +46,12 @@ const App: React.FC = () => {
                     <Route path="/summer" element={<Summer />} />
                     <Route path="/wb" element={<Whiteboard />} />
                     <Route path="/qr-codes" element={<QrCodes />} />
+                    <Route path="/news" element={
+                        <>
+                            <ScrollToTop />
+                            <News />
+                        </>
+                    } />
                 </Routes>
             </HashRouter>
         </AudioProvider>
