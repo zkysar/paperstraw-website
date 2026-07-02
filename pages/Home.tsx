@@ -5,6 +5,8 @@ import { Show } from '../types';
 import { useAudio } from '../context/AudioContext';
 
 import { releases, bandPhotos, faceCoordinates, upcomingShows, previousShows, Release } from '../data/content';
+import { SUBSTACK_URL } from '../lib/newsletter';
+import { captureEvent } from '../lib/analytics';
 
 // Helper for scheduling text
 const getSchedulingText = () => {
@@ -27,6 +29,16 @@ const Home: React.FC = () => {
 
     const [selectedRelease, setSelectedRelease] = useState<string | null>(null);
     const { playTrack, currentTrack, isPlaying, togglePlay } = useAudio();
+
+    const [subscribeEmail, setSubscribeEmail] = useState('');
+
+    const handleSubscribe = (e: React.FormEvent) => {
+        e.preventDefault();
+        captureEvent('newsletter_subscribe_click', { source: 'home-footer' });
+        // Hand off to Substack's opt-in (double opt-in + deliverability). The email
+        // param prefills when supported; harmless if Substack ignores it.
+        window.location.href = `${SUBSTACK_URL}/subscribe?email=${encodeURIComponent(subscribeEmail)}`;
+    };
 
     // Initialize Mobile Image (One time on mount)
     useEffect(() => {
@@ -491,16 +503,14 @@ const Home: React.FC = () => {
                         <div className="flex-1 max-w-md">
                             <h3 className="text-3xl font-bold mb-4">Stay in the loop</h3>
                             <p className="text-gray-400 mb-6">Join the mailing list for pre-sale access, new music alerts, and band updates.</p>
-                            <form
-                                className="flex gap-2 relative z-10"
-                                action="https://formspree.io/f/xlgjyzln"
-                                method="POST"
-                            >
+                            <form className="flex gap-2 relative z-10" onSubmit={handleSubscribe}>
                                 <input
                                     className="flex-1 bg-white/10 border-none rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary outline-none"
                                     placeholder="Your email address"
                                     type="email"
                                     name="email"
+                                    value={subscribeEmail}
+                                    onChange={(e) => setSubscribeEmail(e.target.value)}
                                     required
                                 />
                                 <button className="bg-primary hover:bg-primary-dark text-text-main font-bold px-6 py-3 rounded-lg transition-colors" type="submit">
@@ -524,6 +534,7 @@ const Home: React.FC = () => {
                     <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 pr-48">
                         <p>© 2026 Paper Straw. All rights reserved.</p>
                         <div className="flex gap-4">
+                            <Link to="/news" className="hover:text-white transition-colors">News</Link>
                             <Link to="/for-venues" className="hover:text-white transition-colors">For Venues</Link>
                             <Link to="/stage-plots" className="hover:text-white transition-colors">Stage Plots</Link>
                             <Link to="/qr-codes" className="hover:text-white transition-colors">QR Codes</Link>
