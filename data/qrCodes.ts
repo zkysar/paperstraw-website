@@ -29,4 +29,10 @@ export const qrCodes: QrCode[] = [
         blurb: 'Promo for the new single.',
         destination: 'https://distrokid.com/hyperfollow/paperstraw/summer',
     },
+    {
+        slug: 'wb',
+        label: 'Whiteboard',
+        blurb: 'On the whiteboard.',
+        destination: 'https://distrokid.com/hyperfollow/paperstraw/summer',
+    },
 ];
