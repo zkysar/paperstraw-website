@@ -497,7 +497,7 @@ const Home: React.FC = () => {
             </section>
 
             {/* Newsletter Footer */}
-            <footer className="bg-text-main text-white pt-20 pb-10">
+            <footer className="bg-text-main text-white pt-20 pb-28 md:pb-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
                         <div className="flex-1 max-w-md">
@@ -531,9 +531,9 @@ const Home: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 pr-48">
+                    <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 md:pr-48">
                         <p>© 2026 Paper Straw. All rights reserved.</p>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-2">
                             <Link to="/news" className="hover:text-white transition-colors">News</Link>
                             <Link to="/for-venues" className="hover:text-white transition-colors">For Venues</Link>
                             <Link to="/stage-plots" className="hover:text-white transition-colors">Stage Plots</Link>

@@ -10,7 +10,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "fast-xml-parser": "^5.9.3",
     "posthog-js": "^1.390.2",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.3",
