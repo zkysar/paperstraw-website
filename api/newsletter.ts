@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { SUBSTACK_FEED_URL, parseFeed } from '../lib/newsletter';
+// NB: explicit .js extension is required — this compiles to an ESM function
+// (package.json "type": "module") and Node's ESM resolver rejects extensionless
+// relative imports at load. Omitting it crashes the function (FUNCTION_INVOCATION_FAILED).
+import { SUBSTACK_FEED_URL, parseFeed } from '../lib/newsletter.js';
 
 // Server-side proxy for the Substack RSS feed (the feed has no CORS header, so
 // the browser cannot fetch it directly). Cached at the edge for an hour.

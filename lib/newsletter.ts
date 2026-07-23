@@ -2,10 +2,8 @@
 // feed read-only. The feed sends no CORS header, so it is fetched server-side
 // by api/newsletter.ts, never from the browser.
 //
-// The RSS is parsed with small regex helpers rather than a library so the
-// serverless function stays dependency-free: Vercel traces/bundles the function
-// as ESM, and an external parser (fast-xml-parser) failed to resolve at runtime
-// there, crashing the function on load. Zero external imports = nothing to trace.
+// The RSS is parsed with small regex helpers rather than a library, keeping the
+// serverless function dependency-free (nothing for Vercel to trace/resolve).
 export const SUBSTACK_URL = 'https://paperstrawtheband.substack.com';
 export const SUBSTACK_FEED_URL = `${SUBSTACK_URL}/feed`;
 
