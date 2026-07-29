@@ -207,20 +207,23 @@ const SetlistPage: React.FC = () => {
                 .sl-title { font-size: calc(5.4cqw * var(--fit)); font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1; }
 
                 /* Annotations sit tight under the title they belong to. */
-                .sl-flag { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.7cqw * var(--fit)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--flag); }
+                /* Most shows get printed on a mono laser, where both accents come
+                   out the same mid-gray. So no meaning rests on color alone: talk
+                   is carried by its column, and a flag is carried by its box.
+                   Color is reinforcement on screen and is allowed to vanish. */
+                .sl-flag { display: inline-block; margin-top: calc(0.5cqw * var(--fit)); border: 1px solid currentColor; padding: calc(0.22cqw * var(--fit)) calc(0.75cqw * var(--fit)); font-size: calc(1.7cqw * var(--fit)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--flag); }
                 .sl-cue { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.75cqw * var(--fit)); color: var(--muted); line-height: 1.25; }
                 .sl-lyric { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.85cqw * var(--fit)); font-family: "Libre Baskerville", Georgia, serif; font-style: italic; color: var(--muted); line-height: 1.3; }
 
                 .sl-talk { font-size: calc(1.7cqw * var(--fit)); color: var(--talk); line-height: 1.3; }
                 .sl-talk + .sl-backing { margin-top: calc(0.9cqw * var(--fit)); }
                 .sl-backing { font-size: calc(1.35cqw * var(--fit)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--talk); opacity: 0.72; }
-                /* An undeclared backing is a hole in the sheet, not a default. */
-                .sl-backing.missing { color: var(--flag); opacity: 1; }
+                /* An undeclared backing is a hole in the sheet, not a default.
+                   Boxed, like any other flag, so it survives a mono printer. */
+                .sl-backing.missing { display: inline-block; border: 1px solid currentColor; padding: 0 calc(0.5cqw * var(--fit)); color: var(--flag); opacity: 1; }
 
                 .sl-legend { margin-top: calc(1.6cqw * var(--fit)); padding-top: calc(0.9cqw * var(--fit)); border-top: 1px solid var(--hair); font-size: calc(1.4cqw * var(--fit)); color: var(--muted); }
                 .sl-legend b { font-weight: 700; color: var(--ink); }
-                .sl-legend .k { color: var(--talk); }
-                .sl-legend .f { color: var(--flag); }
 
                 /* On a phone the page metaphor stops paying rent: a letter sheet
                    squeezed to 358px puts talk cues at 6px. Below 640px the sheet
@@ -240,9 +243,11 @@ const SetlistPage: React.FC = () => {
                 @media print {
                     @page { size: letter portrait; margin: 0.45in; }
                     /* Ink on paper: print is always the light theme. */
+                    /* Assume no color: both accents become ink, and the hairline
+                       is darkened enough to actually come off a laser. */
                     .setlist-page, .setlist-page[data-theme="dark"] {
-                        --paper: #ffffff; --ink: #0b0d10; --muted: #5c636d;
-                        --hair: #d7dbe0; --talk: #01527f; --flag: #93450a;
+                        --paper: #ffffff; --ink: #0b0d10; --muted: #4f5661;
+                        --hair: #adb4bd; --talk: #0b0d10; --flag: #0b0d10;
                         background: #fff !important;
                         padding: 0 !important; min-height: 0 !important;
                     }
@@ -332,10 +337,10 @@ const SetlistPage: React.FC = () => {
                                 ))}
                             </div>
 
+                            {/* Names only what a mono printer can still show. */}
                             <p className="sl-legend">
                                 <b>│</b> no gap · <b>A</b> kicks it off · <b>A›B</b> A queues, B starts ·{' '}
-                                <b>A~</b> on feel, no hard cue · <span className="k">talk</span> ·{' '}
-                                <span className="f">flag</span>
+                                <b>A~</b> on feel · right column is talk · boxed is a flag
                             </p>
 
                         </div>
