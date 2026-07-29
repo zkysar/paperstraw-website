@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import ForVenues from './pages/ForVenues';
 import StagePlotsPage from './pages/StagePlots';
 import StagePlotPage from './pages/StagePlot';
+import SetlistsPage from './pages/Setlists';
+import SetlistPage from './pages/Setlist';
 import Card from './pages/Card';
 import Summer from './pages/Summer';
 import Whiteboard from './pages/Whiteboard';
@@ -40,6 +42,18 @@ const App: React.FC = () => {
                         <>
                             <ScrollToTop />
                             <StagePlotPage />
+                        </>
+                    } />
+                    <Route path="/setlists" element={
+                        <>
+                            <ScrollToTop />
+                            <SetlistsPage />
+                        </>
+                    } />
+                    <Route path="/setlists/:slug" element={
+                        <>
+                            <ScrollToTop />
+                            <SetlistPage />
                         </>
                     } />
                     <Route path="/card" element={<Card />} />
