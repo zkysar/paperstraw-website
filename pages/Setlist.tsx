@@ -176,7 +176,9 @@ const SetlistPage: React.FC = () => {
                    song while coming first in reading order -- talk happens
                    before the song it precedes, and that is the order it has to
                    collapse into on a phone. */
-                .sl-row { display: grid; grid-template-columns: 1fr 24%; --gap: calc(2.2cqw * var(--fit)); }
+                /* 27% rather than 24%: wide enough that a URL wraps at a sane
+                   point instead of shattering mid-token. */
+                .sl-row { display: grid; grid-template-columns: 1fr 27%; --gap: calc(2.2cqw * var(--fit)); }
                 /* A talk cue taller than its song stretches the row. That extra
                    height has to land BEFORE the song -- talk is what happens on
                    the way in -- so the song sits at the bottom of its row.
@@ -215,7 +217,11 @@ const SetlistPage: React.FC = () => {
                 .sl-cue { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.75cqw * var(--fit)); color: var(--muted); line-height: 1.25; }
                 .sl-lyric { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.85cqw * var(--fit)); font-family: "Libre Baskerville", Georgia, serif; font-style: italic; color: var(--muted); line-height: 1.3; }
 
-                .sl-talk { font-size: calc(1.7cqw * var(--fit)); color: var(--talk); line-height: 1.3; }
+                /* Talk cues carry URLs to read out on air. A URL is one long
+                   unbreakable token, so without this it overflows the column and
+                   gets clipped by the paper -- and a half-printed address is
+                   worse than none. Break anywhere rather than lose characters. */
+                .sl-talk { font-size: calc(1.7cqw * var(--fit)); color: var(--talk); line-height: 1.3; overflow-wrap: break-word; overflow-wrap: anywhere; }
                 .sl-talk + .sl-backing { margin-top: calc(0.9cqw * var(--fit)); }
                 .sl-backing { font-size: calc(1.35cqw * var(--fit)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--talk); opacity: 0.72; }
                 /* An undeclared backing is a hole in the sheet, not a default.
