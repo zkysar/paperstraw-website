@@ -68,7 +68,7 @@ export const setlists: Setlist[] = [
             'High and Dry',
             '" Drying up in conversation',
             "\" They're the ones who'll hate you",
-            '~ no music | what the band does - EP, video skits, mailing list (short links ready)',
+            '~ no music | what the band does - EP, video skits, mailing list',
             '> Zach',
             'Sun and Soil',
             '>> Matt',
