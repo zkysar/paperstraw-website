@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { setlists } from '../data/setlists';
-import { parseSetlist } from '../lib/setlist';
+import { buildSheet } from '../lib/setlist';
 
 function formatDate(iso: string) {
     const d = new Date(iso + 'T12:00:00');
@@ -12,16 +12,19 @@ function formatDate(iso: string) {
 const FIT_MIN = 0.55;
 const FIT_MAX = 1.6;
 
+type Theme = 'auto' | 'light' | 'dark';
+
 const SetlistPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const set = setlists.find(s => s.slug === slug);
 
-    const entries = useMemo(() => (set ? parseSetlist(set.lines) : []), [set]);
+    const sheet = useMemo(() => (set ? buildSheet(set.lines) : { songs: [], outro: [] }), [set]);
 
     const paperRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const [overflows, setOverflows] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [theme, setTheme] = useState<Theme>('auto');
 
     useEffect(() => {
         if (!set) return;
@@ -33,31 +36,53 @@ const SetlistPage: React.FC = () => {
     // Binary-search the largest --fit whose content still fits the page. Every
     // size on the sheet is in cqw, so the ratio of content height to paper
     // height is width-invariant -- the multiplier resolved on screen is equally
-    // correct at print dimensions.
+    // correct at print dimensions. Re-run once webfonts land, since the lyric
+    // serif changes the measured height.
     useLayoutEffect(() => {
-        const paper = paperRef.current;
-        const content = contentRef.current;
-        if (!paper || !content) return;
+        let cancelled = false;
 
-        const fitsAt = (v: number) => {
-            paper.style.setProperty('--fit', String(v));
-            return content.scrollHeight <= paper.clientHeight;
+        const fit = () => {
+            const paper = paperRef.current;
+            const content = contentRef.current;
+            if (cancelled || !paper || !content) return;
+
+            // Below 640px the sheet is not a page, so there is nothing to fit --
+            // the stylesheet sets a fixed readable scale. Drop the inline value
+            // so it cannot win over that.
+            if (window.matchMedia('(max-width: 640px)').matches) {
+                paper.style.removeProperty('--fit');
+                setOverflows(false);
+                return;
+            }
+
+            const fitsAt = (v: number) => {
+                paper.style.setProperty('--fit', String(v));
+                return content.scrollHeight <= paper.clientHeight;
+            };
+
+            if (!fitsAt(FIT_MIN)) {
+                setOverflows(true);
+                return;
+            }
+            setOverflows(false);
+
+            let lo = FIT_MIN;
+            let hi = FIT_MAX;
+            for (let i = 0; i < 10; i++) {
+                const mid = (lo + hi) / 2;
+                if (fitsAt(mid)) lo = mid; else hi = mid;
+            }
+            paper.style.setProperty('--fit', String(lo));
         };
 
-        if (!fitsAt(FIT_MIN)) {
-            setOverflows(true);
-            return;
-        }
-        setOverflows(false);
-
-        let lo = FIT_MIN;
-        let hi = FIT_MAX;
-        for (let i = 0; i < 10; i++) {
-            const mid = (lo + hi) / 2;
-            if (fitsAt(mid)) lo = mid; else hi = mid;
-        }
-        paper.style.setProperty('--fit', String(lo));
-    }, [entries]);
+        fit();
+        document.fonts?.ready.then(fit);
+        window.addEventListener('resize', fit);
+        return () => {
+            cancelled = true;
+            window.removeEventListener('resize', fit);
+        };
+    }, [sheet]);
 
     async function copyAsText() {
         if (!set) return;
@@ -77,14 +102,51 @@ const SetlistPage: React.FC = () => {
         );
     }
 
+    const rows = [
+        ...sheet.songs.map(song => ({ song, talk: song.talk })),
+        ...(sheet.outro.length ? [{ song: null, talk: sheet.outro }] : []),
+    ];
+
     return (
         <>
             <style>{`
                 /* The sheet is a letter page minus its print margins. Sizes are in
                    cqw (% of the paper's own width) times --fit, so the on-screen
-                   preview is a true preview of the print output at any width.
-                   System sans throughout: no webfont load to shift the measured
-                   height, and it stays legible on a dark floor. */
+                   preview is a true preview of the print output at any width. */
+                .setlist-page {
+                    --paper: #ffffff;
+                    --ink: #0b0d10;
+                    --muted: #767d88;
+                    --hair: #e3e6ea;
+                    --talk: #0369a1;
+                    --flag: #b45309;
+                    background: #eceef1;
+                }
+                .setlist-page[data-theme="dark"] {
+                    --paper: #0c0e12;
+                    --ink: #f2f4f7;
+                    --muted: #7e8794;
+                    --hair: #23272f;
+                    --talk: #7dd3fc;
+                    --flag: #fbbf24;
+                    background: #050608;
+                }
+                @media (prefers-color-scheme: dark) {
+                    .setlist-page[data-theme="auto"] {
+                        --paper: #0c0e12;
+                        --ink: #f2f4f7;
+                        --muted: #7e8794;
+                        --hair: #23272f;
+                        --talk: #7dd3fc;
+                        --flag: #fbbf24;
+                        background: #050608;
+                    }
+                }
+
+                .sl-chrome { color: var(--muted); }
+                .sl-chrome a:hover, .sl-chrome button:hover { color: var(--ink); }
+                .sl-chrome button { border: 1px solid var(--hair); padding: 0.35rem 0.75rem; }
+
                 .sl-paper {
                     --fit: 1;
                     /* Letter minus the 0.45in print margins is 7.6 x 10.1in. The
@@ -93,63 +155,113 @@ const SetlistPage: React.FC = () => {
                     aspect-ratio: 7.6 / 9.95;
                     container-type: inline-size;
                     overflow: hidden;
-                    background: #fff;
+                    background: var(--paper);
+                    color: var(--ink);
                     font-family: ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif;
-                    color: #111827;
                 }
-                .sl-content { box-sizing: border-box; padding: 4cqw 4.5cqw; }
-                /* index.html sets an explicit font-family on h1, which beats
-                   inheritance from .sl-paper -- override it here. */
-                .sl-paper h1, .sl-paper p, .sl-paper span, .sl-paper div { font-family: inherit; }
+                /* index.html sets an explicit font-family on every heading level,
+                   which beats inheritance from .sl-paper -- override it here.
+                   The lyric serif opts back in deliberately. */
+                .sl-paper h1, .sl-paper h2, .sl-paper p, .sl-paper span, .sl-paper div { font-family: inherit; }
+                .sl-content { box-sizing: border-box; padding: 3.4cqw 4cqw; }
 
-                .sl-venue { font-size: calc(3.1cqw * var(--fit)); font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; }
-                .sl-meta { font-size: calc(1.85cqw * var(--fit)); color: #6b7280; margin-top: 0.4cqw; }
-                .sl-rule { border-top: 2px solid #111827; margin: calc(2cqw * var(--fit)) 0 calc(1.6cqw * var(--fit)); }
+                /* Header is reference material: small, quiet, out of the way. */
+                .sl-venue { font-size: calc(2.4cqw * var(--fit)); font-weight: 700; letter-spacing: 0.01em; line-height: 1.2; }
+                .sl-meta { font-size: calc(1.55cqw * var(--fit)); color: var(--muted); margin-top: calc(0.3cqw * var(--fit)); }
+                .sl-rule { border-top: 1px solid var(--hair); margin: calc(1.6cqw * var(--fit)) 0 0; }
 
-                .sl-row { display: flex; align-items: baseline; gap: calc(1.6cqw * var(--fit)); margin-top: calc(1.5cqw * var(--fit)); }
-                .sl-num { font-size: calc(3cqw * var(--fit)); font-weight: 700; color: #9ca3af; min-width: calc(4.6cqw * var(--fit)); text-align: right; font-variant-numeric: tabular-nums; }
-                .sl-title { font-size: calc(5.1cqw * var(--fit)); font-weight: 800; text-transform: uppercase; letter-spacing: -0.015em; line-height: 1.05; }
-                .sl-lyrics { margin: calc(0.5cqw * var(--fit)) 0 0 calc(6.2cqw * var(--fit)); }
-                .sl-lyric { font-size: calc(2.4cqw * var(--fit)); font-style: italic; color: #4b5563; line-height: 1.3; }
+                /* Two columns: the song spine on the left, talk cues parked on
+                   the right so the titles run down uninterrupted. Each song is
+                   its own grid so the talk cell can sit visually right of its
+                   song while coming first in reading order -- talk happens
+                   before the song it precedes, and that is the order it has to
+                   collapse into on a phone. */
+                .sl-row { display: grid; grid-template-columns: 1fr 24%; --gap: calc(2.2cqw * var(--fit)); }
+                .sl-left { grid-column: 1; grid-row: 1; position: relative; --pad: var(--gap); padding-left: calc(9cqw * var(--fit)); padding-top: var(--pad); }
+                .sl-right { grid-column: 2; grid-row: 1; border-left: 1px solid var(--hair); padding-left: calc(2.2cqw * var(--fit)); padding-top: var(--gap); }
 
-                .sl-note { margin-top: calc(1.1cqw * var(--fit)); margin-left: calc(6.2cqw * var(--fit)); font-size: calc(2.3cqw * var(--fit)); line-height: 1.3; }
-                .sl-cue { color: #374151; }
-                .sl-cue::before { content: "\\25B8"; color: #9ca3af; margin-right: 0.7em; }
-                .sl-talk { color: #374151; display: flex; gap: calc(1.2cqw * var(--fit)); align-items: baseline; }
-                .sl-chip { flex: none; font-size: calc(1.7cqw * var(--fit)); font-weight: 800; letter-spacing: 0.12em; color: #fff; background: #6b7280; border-radius: 0.25em; padding: 0.15em 0.6em; }
-                .sl-warning { margin-top: calc(1.3cqw * var(--fit)); margin-left: calc(6.2cqw * var(--fit)); background: #111827; color: #fff; font-size: calc(2.9cqw * var(--fit)); font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; text-align: center; padding: calc(0.7cqw * var(--fit)) 1em; }
+                /* Segue rule: one continuous line in the gutter through songs
+                   that run together. Stops level with the number at each end of
+                   a chain. */
+                .sl-seg { position: absolute; left: calc(8.1cqw * var(--fit)); width: calc(0.32cqw * var(--fit)); background: var(--ink); }
+                .sl-left { --anchor: calc(var(--pad) + 2.6cqw * var(--fit)); }
+                .sl-seg.in.out { top: 0; bottom: 0; }
+                .sl-seg.in:not(.out) { top: 0; height: var(--anchor); }
+                .sl-seg.out:not(.in) { top: var(--anchor); bottom: 0; }
+
+                /* Fixed right-aligned gutter, so every title starts at the same x. */
+                .sl-gutter { position: absolute; left: 0; top: var(--pad); width: calc(7.2cqw * var(--fit)); text-align: right; }
+                .sl-num { font-size: calc(2.5cqw * var(--fit)); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.1; }
+                .sl-starter { font-size: calc(1.9cqw * var(--fit)); font-weight: 700; color: var(--ink); line-height: 1.2; }
+
+                .sl-title { font-size: calc(5.4cqw * var(--fit)); font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1; }
+
+                /* Annotations sit tight under the title they belong to. */
+                .sl-flag { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.7cqw * var(--fit)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--flag); }
+                .sl-cue { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.75cqw * var(--fit)); color: var(--muted); line-height: 1.25; }
+                .sl-lyric { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.85cqw * var(--fit)); font-family: "Libre Baskerville", Georgia, serif; font-style: italic; color: var(--muted); line-height: 1.3; }
+
+                .sl-talk { font-size: calc(1.7cqw * var(--fit)); color: var(--talk); line-height: 1.3; }
+                .sl-talk + .sl-talk { margin-top: calc(0.6cqw * var(--fit)); }
+
+                .sl-legend { margin-top: calc(1.6cqw * var(--fit)); padding-top: calc(0.9cqw * var(--fit)); border-top: 1px solid var(--hair); font-size: calc(1.4cqw * var(--fit)); color: var(--muted); }
+                .sl-legend b { font-weight: 700; color: var(--ink); }
+                .sl-legend .k { color: var(--talk); }
+                .sl-legend .f { color: var(--flag); }
+
+                /* On a phone the page metaphor stops paying rent: a letter sheet
+                   squeezed to 358px puts talk cues at 6px. Below 640px the sheet
+                   stops being a page -- it flows and scrolls at a fixed scale
+                   sized for reading at arm's length, and the talk column folds
+                   above the song it precedes. Print is unaffected. */
+                @media screen and (max-width: 640px) {
+                    .sl-paper { aspect-ratio: auto; height: auto; overflow: visible; --fit: 2.2 !important; }
+                    .sl-row { display: block; }
+                    .sl-right { border-left: none; padding-left: calc(9cqw * var(--fit)); }
+                    /* An empty talk cell would otherwise sit between two songs
+                       and break the segue rule running between them. */
+                    .sl-right:empty { display: none; }
+                    .sl-left { --pad: calc(1.1cqw * var(--fit)); }
+                }
 
                 @media print {
                     @page { size: letter portrait; margin: 0.45in; }
+                    /* Ink on paper: print is always the light theme. */
+                    .setlist-page, .setlist-page[data-theme="dark"] {
+                        --paper: #ffffff; --ink: #0b0d10; --muted: #5c636d;
+                        --hair: #d7dbe0; --talk: #01527f; --flag: #93450a;
+                        background: #fff !important;
+                        padding: 0 !important; min-height: 0 !important;
+                    }
                     body { background: #fff !important; }
-                    .setlist-page { background: #fff !important; padding: 0 !important; min-height: 0 !important; }
                     .setlist-wrap { max-width: none !important; margin: 0 !important; padding: 0 !important; }
-                    .sl-paper { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
+                    .sl-paper { border: none !important; }
                     .sl-screen-only { display: none !important; }
                     .sl-paper, .sl-paper * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 }
             `}</style>
-            <div className="setlist-page min-h-screen bg-gray-100 text-gray-900">
+            <div className="setlist-page min-h-screen" data-theme={theme}>
                 <div className="setlist-wrap max-w-3xl mx-auto px-4 py-8">
 
-                    <div className="sl-screen-only mb-4 flex items-center justify-between gap-4">
-                        <Link to="/setlists" className="text-sm text-gray-600 hover:text-gray-900">← All setlists</Link>
-                        <button
-                            type="button"
-                            onClick={copyAsText}
-                            className="text-sm border border-gray-300 bg-white rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
-                        >
-                            {copied ? 'Copied' : 'Copy as text'}
-                        </button>
+                    <div className="sl-screen-only sl-chrome mb-4 flex items-center justify-between gap-4 text-sm">
+                        <Link to="/setlists">← All setlists</Link>
+                        <div className="flex items-center gap-2">
+                            <button type="button" onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}>
+                                {theme === 'dark' ? 'Light' : 'Dark'}
+                            </button>
+                            <button type="button" onClick={copyAsText}>
+                                {copied ? 'Copied' : 'Copy as text'}
+                            </button>
+                        </div>
                     </div>
 
                     {overflows && (
-                        <p className="sl-screen-only mb-4 text-sm bg-amber-50 border border-amber-300 text-amber-900 rounded-lg px-3 py-2">
+                        <p className="sl-screen-only mb-4 text-sm border border-amber-500/50 text-amber-700 px-3 py-2">
                             This set is too long to fit one page at a readable size. Trim a few lines.
                         </p>
                     )}
 
-                    <div ref={paperRef} className="sl-paper border border-gray-300 rounded-lg shadow-sm">
+                    <div ref={paperRef} className="sl-paper">
                         <div ref={contentRef} className="sl-content">
 
                             <header>
@@ -158,40 +270,49 @@ const SetlistPage: React.FC = () => {
                                     {set.location} — {formatDate(set.date)}
                                     {set.showTime && <> · {set.showTime}</>}
                                 </p>
+                                <div className="sl-rule" />
                             </header>
-                            <div className="sl-rule" />
 
-                            {entries.map((entry, i) => {
-                                if (entry.type === 'song') {
-                                    return (
-                                        <div key={i}>
-                                            <div className="sl-row">
-                                                <span className="sl-num">{entry.number}</span>
-                                                <span className="sl-title">{entry.title}</span>
-                                            </div>
-                                            {entry.lyrics.length > 0 && (
-                                                <div className="sl-lyrics">
-                                                    {entry.lyrics.map((l, j) => (
+                            <div>
+                                {rows.map((row, i) => (
+                                    <div className="sl-row" key={i}>
+                                        <div className="sl-right">
+                                            {row.talk.map((t, j) => (
+                                                <p key={j} className="sl-talk">{t}</p>
+                                            ))}
+                                        </div>
+                                        <div className="sl-left">
+                                            {row.song && (row.song.segueIn || row.song.segueOut) && (
+                                                <span className={`sl-seg ${row.song.segueIn ? 'in' : ''} ${row.song.segueOut ? 'out' : ''}`} />
+                                            )}
+                                            {row.song && (
+                                                <>
+                                                    <div className="sl-gutter">
+                                                        <div className="sl-num">{row.song.number}</div>
+                                                        {row.song.starter && <div className="sl-starter">{row.song.starter}</div>}
+                                                    </div>
+                                                    <h2 className="sl-title">{row.song.title}</h2>
+                                                    {row.song.warnings.map((w, j) => (
+                                                        <p key={j} className="sl-flag">{w}</p>
+                                                    ))}
+                                                    {row.song.cues.map((c, j) => (
+                                                        <p key={j} className="sl-cue">{c}</p>
+                                                    ))}
+                                                    {row.song.lyrics.map((l, j) => (
                                                         <p key={j} className="sl-lyric">“{l}”</p>
                                                     ))}
-                                                </div>
+                                                </>
                                             )}
                                         </div>
-                                    );
-                                }
-                                if (entry.type === 'warning') {
-                                    return <p key={i} className="sl-warning">{entry.text}</p>;
-                                }
-                                if (entry.type === 'talk') {
-                                    return (
-                                        <p key={i} className="sl-note sl-talk">
-                                            <span className="sl-chip">TALK</span>
-                                            <span>{entry.text}</span>
-                                        </p>
-                                    );
-                                }
-                                return <p key={i} className="sl-note sl-cue">{entry.text}</p>;
-                            })}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <p className="sl-legend">
+                                <b>│</b> runs straight into the next song · <b>M</b> initial of whoever starts ·{' '}
+                                <span className="k">this color</span> is talk ·{' '}
+                                <span className="f">THIS COLOR</span> is a flag
+                            </p>
 
                         </div>
                     </div>
