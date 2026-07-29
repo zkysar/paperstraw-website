@@ -177,14 +177,22 @@ const SetlistPage: React.FC = () => {
                    before the song it precedes, and that is the order it has to
                    collapse into on a phone. */
                 .sl-row { display: grid; grid-template-columns: 1fr 24%; --gap: calc(2.2cqw * var(--fit)); }
-                .sl-left { grid-column: 1; grid-row: 1; position: relative; --pad: var(--gap); padding-left: calc(9cqw * var(--fit)); padding-top: var(--pad); }
+                /* A talk cue taller than its song stretches the row. That extra
+                   height has to land BEFORE the song -- talk is what happens on
+                   the way in -- so the song sits at the bottom of its row.
+                   Otherwise the gap opens up after the song and shoves the next
+                   one away, which reads as a break where there isn't one. Talk
+                   means the music stopped, so a song with talk never also
+                   segues in, and a segued song's row is never stretched. */
+                .sl-left { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; }
+                .sl-song { position: relative; margin-top: auto; --pad: var(--gap); padding-left: calc(9cqw * var(--fit)); padding-top: var(--pad); }
                 .sl-right { grid-column: 2; grid-row: 1; border-left: 1px solid var(--hair); padding-left: calc(2.2cqw * var(--fit)); padding-top: var(--gap); }
 
                 /* Segue rule: one continuous line in the gutter through songs
                    that run together. Stops level with the number at each end of
                    a chain. */
                 .sl-seg { position: absolute; left: calc(8.1cqw * var(--fit)); width: calc(0.32cqw * var(--fit)); background: var(--ink); }
-                .sl-left { --anchor: calc(var(--pad) + 2.6cqw * var(--fit)); }
+                .sl-song { --anchor: calc(var(--pad) + 2.6cqw * var(--fit)); }
                 .sl-seg.in.out { top: 0; bottom: 0; }
                 .sl-seg.in:not(.out) { top: 0; height: var(--anchor); }
                 .sl-seg.out:not(.in) { top: var(--anchor); bottom: 0; }
@@ -192,7 +200,9 @@ const SetlistPage: React.FC = () => {
                 /* Fixed right-aligned gutter, so every title starts at the same x. */
                 .sl-gutter { position: absolute; left: 0; top: var(--pad); width: calc(7.2cqw * var(--fit)); text-align: right; }
                 .sl-num { font-size: calc(2.5cqw * var(--fit)); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.1; }
-                .sl-starter { font-size: calc(1.9cqw * var(--fit)); font-weight: 700; color: var(--ink); line-height: 1.2; }
+                .sl-who { font-size: calc(1.9cqw * var(--fit)); font-weight: 700; color: var(--ink); line-height: 1.2; white-space: nowrap; }
+                .sl-who .q { color: var(--muted); font-weight: 600; }
+                .sl-who .feel { color: var(--muted); }
 
                 .sl-title { font-size: calc(5.4cqw * var(--fit)); font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1; }
 
@@ -202,7 +212,10 @@ const SetlistPage: React.FC = () => {
                 .sl-lyric { margin-top: calc(0.45cqw * var(--fit)); font-size: calc(1.85cqw * var(--fit)); font-family: "Libre Baskerville", Georgia, serif; font-style: italic; color: var(--muted); line-height: 1.3; }
 
                 .sl-talk { font-size: calc(1.7cqw * var(--fit)); color: var(--talk); line-height: 1.3; }
-                .sl-talk + .sl-talk { margin-top: calc(0.6cqw * var(--fit)); }
+                .sl-talk + .sl-backing { margin-top: calc(0.9cqw * var(--fit)); }
+                .sl-backing { font-size: calc(1.35cqw * var(--fit)); font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--talk); opacity: 0.72; }
+                /* An undeclared backing is a hole in the sheet, not a default. */
+                .sl-backing.missing { color: var(--flag); opacity: 1; }
 
                 .sl-legend { margin-top: calc(1.6cqw * var(--fit)); padding-top: calc(0.9cqw * var(--fit)); border-top: 1px solid var(--hair); font-size: calc(1.4cqw * var(--fit)); color: var(--muted); }
                 .sl-legend b { font-weight: 700; color: var(--ink); }
@@ -221,7 +234,7 @@ const SetlistPage: React.FC = () => {
                     /* An empty talk cell would otherwise sit between two songs
                        and break the segue rule running between them. */
                     .sl-right:empty { display: none; }
-                    .sl-left { --pad: calc(1.1cqw * var(--fit)); }
+                    .sl-song { --pad: calc(1.1cqw * var(--fit)); }
                 }
 
                 @media print {
@@ -278,18 +291,29 @@ const SetlistPage: React.FC = () => {
                                     <div className="sl-row" key={i}>
                                         <div className="sl-right">
                                             {row.talk.map((t, j) => (
-                                                <p key={j} className="sl-talk">{t}</p>
+                                                <React.Fragment key={j}>
+                                                    <p className={`sl-backing ${t.backing ? '' : 'missing'}`}>
+                                                        {t.backing ?? 'backing?'}
+                                                    </p>
+                                                    <p className="sl-talk">{t.text}</p>
+                                                </React.Fragment>
                                             ))}
                                         </div>
                                         <div className="sl-left">
-                                            {row.song && (row.song.segueIn || row.song.segueOut) && (
-                                                <span className={`sl-seg ${row.song.segueIn ? 'in' : ''} ${row.song.segueOut ? 'out' : ''}`} />
-                                            )}
                                             {row.song && (
-                                                <>
+                                                <div className="sl-song">
+                                                    {(row.song.segueIn || row.song.segueOut) && (
+                                                        <span className={`sl-seg ${row.song.segueIn ? 'in' : ''} ${row.song.segueOut ? 'out' : ''}`} />
+                                                    )}
                                                     <div className="sl-gutter">
                                                         <div className="sl-num">{row.song.number}</div>
-                                                        {row.song.starter && <div className="sl-starter">{row.song.starter}</div>}
+                                                        {row.song.starter && (
+                                                            <div className="sl-who">
+                                                                {row.song.queuer && <><span className="q">{row.song.queuer}</span><span className="q">›</span></>}
+                                                                {row.song.starter}
+                                                                {row.song.onFeel && <span className="feel">~</span>}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <h2 className="sl-title">{row.song.title}</h2>
                                                     {row.song.warnings.map((w, j) => (
@@ -301,7 +325,7 @@ const SetlistPage: React.FC = () => {
                                                     {row.song.lyrics.map((l, j) => (
                                                         <p key={j} className="sl-lyric">“{l}”</p>
                                                     ))}
-                                                </>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -309,9 +333,9 @@ const SetlistPage: React.FC = () => {
                             </div>
 
                             <p className="sl-legend">
-                                <b>│</b> runs straight into the next song · <b>M</b> initial of whoever starts ·{' '}
-                                <span className="k">this color</span> is talk ·{' '}
-                                <span className="f">THIS COLOR</span> is a flag
+                                <b>│</b> no gap · <b>A</b> kicks it off · <b>A›B</b> A queues, B starts ·{' '}
+                                <b>A~</b> on feel, no hard cue · <span className="k">talk</span> ·{' '}
+                                <span className="f">flag</span>
                             </p>
 
                         </div>

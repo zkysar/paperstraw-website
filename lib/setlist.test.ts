@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseSetlist, parseCue, buildSheet } from './setlist';
+import { parseSetlist, parseCue, parseTalk, buildSheet } from './setlist';
 
 describe('parseSetlist', () => {
   it('treats an unprefixed line as a song', () => {
@@ -87,51 +87,79 @@ describe('parseSetlist', () => {
 });
 
 describe('parseCue', () => {
-  it('reads "straight into" as a segue and drops the named target', () => {
-    expect(parseCue('straight into Bikes - Zach starts')).toEqual({
-      segue: true,
-      starter: 'Z',
-      text: '',
+  it('reads a bare name as who starts the song', () => {
+    expect(parseCue('Zach')).toEqual({
+      segue: false, starter: 'Z', queuer: undefined, onFeel: false, note: '',
     });
   });
 
-  it('reads a segue with no named target', () => {
-    expect(parseCue('straight into - Zach starts')).toEqual({
-      segue: true,
-      starter: 'Z',
-      text: '',
+  it('reads a leading ">" as a segue from the previous song', () => {
+    expect(parseCue('> Zach')).toEqual({
+      segue: true, starter: 'Z', queuer: undefined, onFeel: false, note: '',
     });
   });
 
-  it('takes the starter initial and keeps the rest of the cue', () => {
-    expect(parseCue('Matt starts when it feels right')).toEqual({
-      segue: false,
-      starter: 'M',
-      text: 'when it feels right',
+  it('reads a trailing "~" as kicked off on feel', () => {
+    expect(parseCue('Matt~')).toEqual({
+      segue: false, starter: 'M', queuer: undefined, onFeel: true, note: '',
     });
   });
 
-  it('takes the first name followed by "starts", not a later one', () => {
-    expect(parseCue('Evan starts when Zach queues')).toEqual({
-      segue: false,
-      starter: 'E',
-      text: 'when Zach queues',
+  it('reads "A>B" as A queues and B starts', () => {
+    expect(parseCue('Zach>Evan')).toEqual({
+      segue: false, starter: 'E', queuer: 'Z', onFeel: false, note: '',
     });
   });
 
-  it('leaves a cue with no recognised pattern untouched', () => {
-    expect(parseCue('tune to drop D')).toEqual({
-      segue: false,
-      starter: undefined,
-      text: 'tune to drop D',
+  it('combines a segue, split roles, feel, and a note', () => {
+    expect(parseCue('> Zach>Evan~ - hold the last chord')).toEqual({
+      segue: true, starter: 'E', queuer: 'Z', onFeel: true, note: 'hold the last chord',
+    });
+  });
+
+  it('keeps a note that follows a bare name', () => {
+    expect(parseCue('Zach - count it in')).toEqual({
+      segue: false, starter: 'Z', queuer: undefined, onFeel: false, note: 'count it in',
+    });
+  });
+
+  it('records a segue with nobody named', () => {
+    expect(parseCue('>')).toEqual({
+      segue: true, starter: undefined, queuer: undefined, onFeel: false, note: '',
+    });
+  });
+});
+
+describe('parseTalk', () => {
+  it('takes the backing from before the pipe', () => {
+    expect(parseTalk('no music | intro the band')).toEqual({
+      backing: 'no music', text: 'intro the band',
+    });
+  });
+
+  it('accepts any backing the setlist names', () => {
+    expect(parseTalk('over music | what the band does')).toEqual({
+      backing: 'over music', text: 'what the band does',
+    });
+  });
+
+  it('leaves the backing unset when no pipe is present, so the sheet can flag it', () => {
+    expect(parseTalk('intro the band')).toEqual({
+      backing: undefined, text: 'intro the band',
+    });
+  });
+
+  it('splits on the first pipe only', () => {
+    expect(parseTalk('no music | EP, video skits | mailing list')).toEqual({
+      backing: 'no music', text: 'EP, video skits | mailing list',
     });
   });
 });
 
 describe('buildSheet', () => {
-  it('attaches a preceding talk line to the song that follows it', () => {
-    const { songs } = buildSheet(['~ thank the room', 'Summer']);
-    expect(songs[0].talk).toEqual(['thank the room']);
+  it('attaches a preceding talk cue to the song that follows it', () => {
+    const { songs } = buildSheet(['~ no music | thank the room', 'Summer']);
+    expect(songs[0].talk).toEqual([{ backing: 'no music', text: 'thank the room' }]);
   });
 
   it('attaches a preceding warning to the song that follows it', () => {
@@ -144,23 +172,18 @@ describe('buildSheet', () => {
     expect(songs[0].lyrics).toEqual(['first line']);
   });
 
-  it('sets segueIn on the song a segue cue precedes', () => {
-    const { songs } = buildSheet(['Summer', '> straight into - Zach starts', 'Bikes']);
+  it('sets segueIn on the song a ">>" cue precedes', () => {
+    const { songs } = buildSheet(['Summer', '>> Zach', 'Bikes']);
     expect(songs.map(s => s.segueIn)).toEqual([false, true]);
   });
 
   it('sets segueOut on the song a segue leads away from', () => {
-    const { songs } = buildSheet(['Summer', '> straight into - Zach starts', 'Bikes']);
+    const { songs } = buildSheet(['Summer', '>> Zach', 'Bikes']);
     expect(songs.map(s => s.segueOut)).toEqual([true, false]);
   });
 
   it('does not chain across a song that is not segued into', () => {
-    const { songs } = buildSheet([
-      'Summer',
-      '> straight into - Zach starts',
-      'Bikes',
-      'Tommy',
-    ]);
+    const { songs } = buildSheet(['Summer', '>> Zach', 'Bikes', 'Tommy']);
     expect(songs.map(s => [s.segueIn, s.segueOut])).toEqual([
       [false, true],
       [true, false],
@@ -168,21 +191,17 @@ describe('buildSheet', () => {
     ]);
   });
 
-  it('puts the starter initial on the song the cue precedes', () => {
-    const { songs } = buildSheet(['> Matt starts when it feels right', 'Summer']);
-    expect(songs[0].starter).toBe('M');
-    expect(songs[0].cues).toEqual(['when it feels right']);
-  });
-
-  it('drops a cue that is fully encoded by the segue and starter marks', () => {
-    const { songs } = buildSheet(['Summer', '> straight into - Zach starts', 'Bikes']);
-    expect(songs[1].cues).toEqual([]);
+  it('puts the starter, queuer, and feel mark on the song the cue precedes', () => {
+    const { songs } = buildSheet(['> Zach>Evan~', 'Tommy']);
+    expect(songs[0].starter).toBe('E');
+    expect(songs[0].queuer).toBe('Z');
+    expect(songs[0].onFeel).toBe(true);
   });
 
   it('collects talk after the last song as outro', () => {
-    const { songs, outro } = buildSheet(['Summer', '~ plug the EP']);
+    const { songs, outro } = buildSheet(['Summer', '~ no music | plug the EP']);
     expect(songs).toHaveLength(1);
     expect(songs[0].talk).toEqual([]);
-    expect(outro).toEqual(['plug the EP']);
+    expect(outro).toEqual([{ backing: 'no music', text: 'plug the EP' }]);
   });
 });
