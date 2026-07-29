@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import ForVenues from './pages/ForVenues';
 import StagePlotsPage from './pages/StagePlots';
@@ -9,6 +9,7 @@ import Summer from './pages/Summer';
 import Whiteboard from './pages/Whiteboard';
 import QrCodes from './pages/QrCodes';
 import News from './pages/News';
+import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 import PostHogPageviews from './components/PostHogPageviews';
 import Layout from './components/Layout';
@@ -17,7 +18,7 @@ import { AudioProvider } from './context/AudioContext';
 const App: React.FC = () => {
     return (
         <AudioProvider>
-            <HashRouter>
+            <BrowserRouter>
                 <PostHogPageviews />
                 <Routes>
                     <Route path="/" element={
@@ -52,8 +53,14 @@ const App: React.FC = () => {
                             <News />
                         </>
                     } />
+                    <Route path="*" element={
+                        <>
+                            <ScrollToTop />
+                            <NotFound />
+                        </>
+                    } />
                 </Routes>
-            </HashRouter>
+            </BrowserRouter>
         </AudioProvider>
     );
 };

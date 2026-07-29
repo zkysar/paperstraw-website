@@ -13,6 +13,13 @@
       ]
     }
   ],
+  "rewrites": [
+    {
+      "comment": "Clean URLs: the app is a client-side router, so any path it owns must be served index.html. /api is excluded so the newsletter function still resolves; real files are matched by the filesystem before rewrites run.",
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ],
   "redirects": [
     {
       "source": "/card",

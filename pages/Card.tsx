@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react';
+import { incomingParams, withParams } from '../lib/shortLink';
 
 // Destination for the business-card QR code. Swap this to change where /card sends people.
 const CARD_DESTINATION = 'https://partiful.com/e/TKcXWyCSOEqQVeTLp8D8';
 
 const Card: React.FC = () => {
     useEffect(() => {
-        const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
-        const dest = new URL(CARD_DESTINATION);
-        params.forEach((value, key) => {
-            if (!dest.searchParams.has(key)) dest.searchParams.set(key, value);
-        });
-        window.location.replace(dest.toString());
+        window.location.replace(withParams(CARD_DESTINATION, incomingParams(window.location)));
     }, []);
 
     return (
