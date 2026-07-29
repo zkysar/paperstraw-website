@@ -42,6 +42,17 @@
 }
 </script>
 <link rel="stylesheet" href="/index.css">
+<script>
+  // The site used to run on a hash router, so links and QR codes shared before
+  // the switch look like /#/news. Send those to the clean path before the app
+  // mounts, or they would all land on the homepage. Any query the hash carried
+  // rides along, since it is part of the string being handed to replace().
+  // In-page anchors like #signup do not start with "#/" and are left alone.
+  (function () {
+    var hash = window.location.hash;
+    if (hash.slice(0, 2) === '#/') window.location.replace(hash.slice(1));
+  })();
+</script>
 </head>
   <body class="bg-background-light dark:bg-background-dark text-text-main font-body antialiased overflow-x-hidden">
     <div id="root"></div>
