@@ -33,6 +33,6 @@ export const qrCodes: QrCode[] = [
         slug: 'wb',
         label: 'Whiteboard',
         blurb: 'On the whiteboard.',
-        destination: 'https://distrokid.com/hyperfollow/paperstraw/summer',
+        destination: 'https://www.instagram.com/paperstrawtheband/',
     },
 ];
