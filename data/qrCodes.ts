@@ -33,6 +33,6 @@ export const qrCodes: QrCode[] = [
         slug: 'wb',
         label: 'Whiteboard',
         blurb: 'On the whiteboard.',
-        destination: 'https://www.instagram.com/broomhead/',
+        destination: 'https://venmo.com/u/broomhead',
     },
 ];

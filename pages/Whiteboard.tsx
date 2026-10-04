@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { incomingParams, withParams } from '../lib/shortLink';
 
 // Destination for the "whiteboard" QR code (/wb). Swap this to change where /wb sends people.
-const WHITEBOARD_DESTINATION = 'https://www.instagram.com/broomhead/';
+const WHITEBOARD_DESTINATION = 'https://venmo.com/u/broomhead';
 
 const Whiteboard: React.FC = () => {
     useEffect(() => {
